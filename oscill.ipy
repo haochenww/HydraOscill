@@ -423,14 +423,16 @@ class OscillApp(QtWidgets.QMainWindow, OscillGUI.Ui_MainWindow):
         save_file = savedir + '/' + filename + '.csv'
         headers = ['Time(hr)', 'Radius(um)', 'Aspect Ratio(1 is circle)', 'Angle(rad)']
     
-        with open(save_file, 'w') as csvfile:
-            filewriter = csv.writer(csvfile) 
-            filewriter.writerow(headers) #write first row (column headers)
+        with open(save_file, 'a') as csvfile:
+            filewriter = csv.DictWriter(csvfile, fieldnames=headers) 
+            filewriter.writeheader() #write first row (column headers)
             
-            for i in range(1,var.n): #write row for each image
-                filewriter.writerow([var.time[i], var.radius_um[i], var.ratio[i], var.angle[i]])
-        
-        self.statusBar().showMessage("Results saved to csv.")
+            for i in range(0,var.n): #write row for each image
+                filewriter.writerow({'Time(hr)': var.time[i], 'Radius(um)':var.radius_um[i],
+                                     'Aspect Ratio':var.ratio[i], 'Angle(rad)':var.angle[i]})
+            self.statusBar().showMessage("Wrote Headers")
+       
+       self.statusBar().showMessage("Results saved to csv.")
         
     # =============================================================================
     # Function: segment_and_measure
